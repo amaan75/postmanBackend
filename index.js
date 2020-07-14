@@ -1,7 +1,6 @@
-const express= require('express')
-const bodyparser= require('body-parser')
-const app=express()
-
+const express = require('express')
+const bodyparser = require('body-parser')
+const app = express()
 
 app.use(bodyparser.json())
 
@@ -17,6 +16,7 @@ app.use((req, res, next) => {
 });
 //CONNECTING TO DATABASE
 require('./utils/database/database')
+require('./config')
 
 //IMPORT ROUTERS
 let UserRouter = require('./routes/UserRouter')
@@ -24,7 +24,8 @@ let UserAuthRouter = require('./routes/UserAuthRoute')
 let WeatherRouter = require('./weather/WeatherRoute')
 let ClassRouter = require('./routes/ClassRouter')
 let BooksRouter = require('./routes/BooksRouter')
-let CollegeROuter=require('./routes/CollegeRouter')
+let CollegeROuter = require('./routes/CollegeRouter')
+let RequestRouter = require('./routes/RequestsRouter')
 
 
 //USING OUR ROUTES
@@ -35,6 +36,8 @@ app.use('/weather', WeatherRouter)
 app.use('/class', ClassRouter)
 app.use('/books', BooksRouter)
 app.use('/colleges', CollegeROuter)
+app.use('/requests', RequestRouter)
+
 
 
 module.exports = app
