@@ -6,12 +6,11 @@ const connectedSql = require("../utils/database/sql/connectedSql")
 
 
 router.get("/sql", (req, res, next) => {
-    connectedSql.then(connection => {
-        console.log(connection)
-        connection.events.getEvents("123").then(dbResult => {
-            console.log(dbResult);
-            res.status(200).send(dbResult.recordset);
-        }).catch(err => console.log(err))
+    connectedSql.then(db => {
+        const dbOps = db.events;
+        const dbResult = dbOps.getEvents("123");
+        dbResult.then(dbResult => res.status(200).send(dbResult.recordset))
+            .catch(err => console.log(err))
     });
 
 });

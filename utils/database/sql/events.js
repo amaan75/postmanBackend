@@ -5,7 +5,6 @@ const register = async ({ sql, getConnection }) => {
     const sqlQueries = await utils.loadSqlQueries("queries");
 
     const getEvents = async userId => {
-        console.log("getCon", getConnection);
         // get a connection to SQL Server
         const cnx = await getConnection();
 
