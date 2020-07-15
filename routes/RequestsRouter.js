@@ -3,7 +3,6 @@ const router = express.Router()
 const auth = require('../middleware/auth').auth
 const RequestsCtrl = require('../controllers/RequestsCtrl')
 const connectedSql = require("../utils/database/sql/connectedSql")
-const e = require('express')
 const axios = require('axios').default;
 
 
