@@ -3,6 +3,7 @@ const router = express.Router()
 const auth = require('../middleware/auth').auth
 const RequestsCtrl = require('../controllers/RequestsCtrl')
 const connectedSql = require("../utils/database/sql/connectedSql")
+const { request } = require('express')
 const axios = require('axios').default;
 
 
@@ -18,10 +19,11 @@ router.get("/sql", (req, res, next) => {
 
 router.post("/make/request", (req, res, next) => {
     console.log("make requests")
-    const method = req.body.method.toLowerCase() || "get";
-    const url = req.body.url;
-    const body = req.body.body;
-    const headers = req.body.headers || [];
+    const requestBody = req.body || {};
+    const method = (requestBody.method || "get").toLowerCase()
+    const url = requestBody.url;
+    const body = requestBody.body;
+    const headers = requestBody.headers || [];
     const axiosHeaders = {};
     for (let index = 0; index < headers.length; index++) {
         const element = headers[index];
