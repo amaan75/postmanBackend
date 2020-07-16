@@ -25,18 +25,22 @@ router.post("/make/request", (req, res, next) => {
     const body = requestBody.body;
     const headers = requestBody.headers || [];
     const axiosHeaders = {};
-    for (let index = 0; index < headers.length; index++) {
-        const element = headers[index];
-        axiosHeaders[element.key] = element.values.reduce(reducer);
+    for (const header in headers) {
+        if (headers.hasOwnProperty(header)) {
+            const element = headers[header];
+            axiosHeaders[header] = element.reduce(reducer);
+        }
     }
+
+    // console.log("axiosHeaders", axiosHeaders)
     axios.request({ url: url, method: method, headers: axiosHeaders, data: body })
         .then(response => {
-            console.log(response);
+            // console.log(response);
             const headers = repsonseHeaders(response.headers);
             const body = response.data
             res.status(response.status).json({ url, headers, body, method });
         }).catch(err => {
-            console.log(err)
+            // console.log(err)
             res.status(400).send(err.message)
         })
 
