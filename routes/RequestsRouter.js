@@ -48,14 +48,11 @@ const unReduce = (headerValueString) => {
     return [];
 }
 const repsonseHeaders = (headers) => {
-    let resultHeaders = [];
+    let resultHeaders = {};
     for (const key in headers) {
-        if (headers.hasOwnProperty(key)) {
-            const element = headers[key];
-            resultHeaders.push({ key, values: unReduce(headers[key]) })
-        }
+        const values = headers[key];
+        resultHeaders[key] = unReduce(values)
     }
-
     return resultHeaders;
 }
 
