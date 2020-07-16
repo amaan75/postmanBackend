@@ -31,9 +31,9 @@ router.post("/make/request", (req, res, next) => {
             axiosHeaders[header] = element.reduce(reducer);
         }
     }
-
-    // console.log("axiosHeaders", axiosHeaders)
-    axios.request({ url: url, method: method, headers: axiosHeaders, data: body })
+    const axiosRequest = { url: url, method: method, headers: axiosHeaders, data: body };
+    console.log(`axiosRequest :${JSON.stringify(axiosRequest, null, 2)}`)
+    axios.request(axiosRequest)
         .then(response => {
             // console.log(response);
             const headers = repsonseHeaders(response.headers);
