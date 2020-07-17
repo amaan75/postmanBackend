@@ -24,6 +24,7 @@ router.post("/make/request", (req, res, next) => {
     const url = requestBody.url;
     const body = requestBody.body;
     const headers = requestBody.headers || [];
+    const params = requestBody.params || {};
     const axiosHeaders = {};
     for (const header in headers) {
         if (headers.hasOwnProperty(header)) {
@@ -31,7 +32,7 @@ router.post("/make/request", (req, res, next) => {
             axiosHeaders[header] = element.reduce(reducer);
         }
     }
-    const axiosRequest = { url: url, method: method, headers: axiosHeaders, data: body };
+    const axiosRequest = { url: url, method: method, headers: axiosHeaders, params, data: body };
     console.log(`axiosRequest :${JSON.stringify(axiosRequest, null, 2)}`)
     axios.request(axiosRequest)
         .then(response => {
