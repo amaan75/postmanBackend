@@ -47,7 +47,8 @@ router.post("/make/request", (req, res, next) => {
         headers: axiosHeaders,
         params,
         maxRedirects,
-        data: body
+        data: body,
+        validateStatus
     };
     axios.request(axiosRequest)
         .then(response => {
