@@ -26,8 +26,9 @@ router.post("/make/request", (req, res, next) => {
     const body = requestBody.body;
     const headers = requestBody.headers || {};
     const params = requestBody.params || {};
+    const maxRedirects = requestBody.maxRedirects || 0;
+    let validateStatus = undefined;
     let axiosHeaders = {};
-
     for (const header in headers) {
         if (headers.hasOwnProperty(header)) {
             const element = headers[header];
@@ -35,8 +36,19 @@ router.post("/make/request", (req, res, next) => {
         }
     }
 
-    const axiosRequest = { url: url, method: method, headers:axiosHeaders,params,maxRedirects:0,  data: body };
-   // console.log(`axiosRequest :${JSON.stringify(axiosRequest, null, 2)}`)
+    if (maxRedirects === 0) {
+        validateStatus = function (status) {
+            return status >= 200 && status < 400;
+        }
+    }
+    const axiosRequest = {
+        url: url,
+        method: method,
+        headers: axiosHeaders,
+        params,
+        maxRedirects,
+        data: body
+    };
     axios.request(axiosRequest)
         .then(response => {
             console.log(response.headers);
@@ -44,9 +56,7 @@ router.post("/make/request", (req, res, next) => {
             const body = response.data
             res.status(response.status).json({ url, headers, body, method });
         }).catch(err => {
-
-              console.log(err.response.headers)
-
+            console.log(err.response.headers)
             res.status(400).send(err.message)
         })
 
@@ -54,15 +64,15 @@ router.post("/make/request", (req, res, next) => {
 
 const reducer = (accumulator, currentValue) => `${accumulator},${currentValue}`;
 const unReduce = (headerValueString) => {
-    if(_.isArray(headerValueString)) return headerValueString;
-    if (headerValueString !== undefined || headerValueString !== null ) {
+    if (_.isArray(headerValueString)) return headerValueString;
+    if (headerValueString !== undefined || headerValueString !== null) {
 
         return [headerValueString]
     }
-    return [] ;
+    return [];
 }
 const repsonseHeaders = (headers) => {
-    if(_.isEmpty(headers)) return {};
+    if (_.isEmpty(headers)) return {};
     let resultHeaders = {};
     for (const key in headers) {
         const values = headers[key];
