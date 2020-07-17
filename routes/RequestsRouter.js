@@ -5,6 +5,7 @@ const RequestsCtrl = require('../controllers/RequestsCtrl')
 const connectedSql = require("../utils/database/sql/connectedSql")
 const { request } = require('express')
 const axios = require('axios').default;
+const _ = require("lodash");
 
 
 router.get("/sql", (req, res, next) => {
@@ -23,25 +24,29 @@ router.post("/make/request", (req, res, next) => {
     const method = (requestBody.method || "get").toLowerCase()
     const url = requestBody.url;
     const body = requestBody.body;
-    const headers = requestBody.headers || [];
+    const headers = requestBody.headers || {};
     const params = requestBody.params || {};
-    const axiosHeaders = {};
+    let axiosHeaders = {};
+
     for (const header in headers) {
         if (headers.hasOwnProperty(header)) {
             const element = headers[header];
             axiosHeaders[header] = element.reduce(reducer);
         }
     }
-    const axiosRequest = { url: url, method: method, headers: axiosHeaders, params, data: body };
-    console.log(`axiosRequest :${JSON.stringify(axiosRequest, null, 2)}`)
+
+    const axiosRequest = { url: url, method: method, headers:axiosHeaders,params,maxRedirects:0,  data: body };
+   // console.log(`axiosRequest :${JSON.stringify(axiosRequest, null, 2)}`)
     axios.request(axiosRequest)
         .then(response => {
-            // console.log(response);
+            console.log(response.headers);
             const headers = repsonseHeaders(response.headers);
             const body = response.data
             res.status(response.status).json({ url, headers, body, method });
         }).catch(err => {
-            // console.log(err)
+
+              console.log(err.response.headers)
+
             res.status(400).send(err.message)
         })
 
@@ -49,15 +54,19 @@ router.post("/make/request", (req, res, next) => {
 
 const reducer = (accumulator, currentValue) => `${accumulator},${currentValue}`;
 const unReduce = (headerValueString) => {
-    if (headerValueString !== undefined || headerValueString !== null) {
-        return headerValueString.split(',');
+    if(_.isArray(headerValueString)) return headerValueString;
+    if (headerValueString !== undefined || headerValueString !== null ) {
+
+        return [headerValueString]
     }
-    return [];
+    return [] ;
 }
 const repsonseHeaders = (headers) => {
+    if(_.isEmpty(headers)) return {};
     let resultHeaders = {};
     for (const key in headers) {
         const values = headers[key];
+        console.log(`key : ${key} values :${values}`)
         resultHeaders[key] = unReduce(values)
     }
     return resultHeaders;
