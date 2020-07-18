@@ -8,11 +8,10 @@ const axios = require('axios').default;
 const _ = require("lodash");
 
 
-router.get("/sql", (req, res, next) => {
+router.post("/sql", (req, res, next) => {
     connectedSql.then(db => {
         const dbOps = db.camunda;
-        const dbResult = dbOps.executeQuery(req.sql);
-        dbResult.then(dbResult => res.status(200).send(dbResult.recordset))
+      dbOps.executeQuery(req.body.sql).then(dbResult => res.status(200).send(dbResult.recordset))
             .catch(err => console.log(err))
     }).catch(err => console.log(err));
 
