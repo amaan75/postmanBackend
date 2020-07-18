@@ -10,13 +10,15 @@ const _ = require("lodash");
 
 router.get("/sql", (req, res, next) => {
     connectedSql.then(db => {
-        const dbOps = db.events;
-        const dbResult = dbOps.getEvents("123");
+        const dbOps = db.camunda;
+        const dbResult = dbOps.getIds();
         dbResult.then(dbResult => res.status(200).send(dbResult.recordset))
             .catch(err => console.log(err))
     }).catch(err => console.log(err));
 
 });
+
+
 
 router.post("/make/request", (req, res, next) => {
     console.log("make requests")
@@ -55,9 +57,9 @@ router.post("/make/request", (req, res, next) => {
             console.log(response.headers);
             const headers = repsonseHeaders(response.headers);
             const body = response.data
-            res.status(response.status).json({ url, headers, body, method });
+            res.status(200).json({ url, headers, body, method });
         }).catch(err => {
-            console.log(err.response.headers)
+            console.log(err.response)
             res.status(400).send(err.message)
         })
 

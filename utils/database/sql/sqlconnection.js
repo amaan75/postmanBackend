@@ -1,4 +1,5 @@
 const events = require("./events");
+const camunda = require("./camunda");
 const sql = require("mssql");
 
 const client = async (config) => {
@@ -30,6 +31,7 @@ const client = async (config) => {
                 return pool;
             }
             // create a new connection pool
+            console.log(`config ${JSON.stringify(config,null,2)}`)
             pool = await sql.connect(config);
 
             // catch any connection errors and close the pool
@@ -50,7 +52,8 @@ const client = async (config) => {
     // this is the API the client exposes to the rest
     // of the application
     return {
-        events: await events.register({ sql, getConnection })
+        events: await events.register({ sql, getConnection }),
+        camunda: await camunda.register({sql,getConnection})
     };
 };
 
